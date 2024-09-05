@@ -2,7 +2,7 @@ import React from 'react'
 import Container from './container'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
-import { Button } from '../button'
+import { Button } from '../ui/button'
 import { ShoppingCart, User, ArrowRight } from 'lucide-react'
 
 interface Props {
