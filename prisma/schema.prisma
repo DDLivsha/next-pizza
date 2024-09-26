@@ -18,6 +18,7 @@ model User {
     orders           Order[]
     provider         String?
     providerId       String?
+    verified         DateTime
     verificationCode verificationCode?
     createdAt        DateTime          @default(now())
     updatedAt        DateTime          @updatedAt
