@@ -1,21 +1,16 @@
 import { Api } from "@/services/api-client"
 import { Ingredient } from "@prisma/client"
 import React from "react"
-import { useSet } from "react-use"
 
 interface Props {
     ingredients: Ingredient[]
     loading: boolean
-    selectedIds: Set<string>
-    onAddId: (id: string) => void
 }
+export const useIngredients = () => {
 
-export const useFilterIngredients = (values: string[] = []): Props => {
 
     const [ingredients, setIngredients] = React.useState<Ingredient[]>([])
     const [loading, setLoading] = React.useState<boolean>(true)
-    const [selectedIds, { toggle }] = useSet(new Set<string>(values))
-
 
     React.useEffect(() => {
         async function GetIngredients() {
@@ -31,7 +26,6 @@ export const useFilterIngredients = (values: string[] = []): Props => {
         GetIngredients()
     }, [])
 
-
-    return { ingredients, loading, selectedIds, onAddId: toggle, }
+    return { ingredients, loading }
 
 }
