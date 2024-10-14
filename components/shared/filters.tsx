@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { FilterCheckbox } from '@/components/shared/filter-checkbox';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,8 @@ import { Title } from './title';
 import { RangeSlider } from '../ui/range-slider';
 import { useFilterIngredients } from '@/hooks/useFilterIngredients';
 import { useSet } from 'react-use';
+import qs from 'qs';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface Props {
     className?: string;
@@ -18,13 +20,31 @@ interface PriceProps {
     priceTo: number
 }
 
+interface QueryFilters extends PriceProps {
+    pizzaTypes: string
+    sizes: string
+    ingredients: string
+}
+
 export const Filters: React.FC<Props> = ({ className }) => {
+    const searchParams = useSearchParams() as unknown as Map<keyof QueryFilters, string>
 
-    const { ingredients, loading, selectedIds, onAddId } = useFilterIngredients()
+    // @ts-ignore
+    const { ingredients, loading, selectedIds, onAddId } = useFilterIngredients(searchParams.get('ingredients')?.split(','))
+    const router = useRouter()
 
-    const [sizes, {toggle: toggleSizes}] = useSet(new Set<string>([]))
 
-    const [price, setPrice] = React.useState<PriceProps>({ priceFrom: 0, priceTo: 1000 })
+
+    const [sizes, { toggle: toggleSizes }] = useSet(new Set<string>(searchParams.get('sizes')?.split(',') || []))
+
+    const [pizzaTypes, { toggle: togglePizzaTypes }] = useSet(new Set<string>(searchParams.get('pizzaTypes')?.split(',') || []))
+
+    const [price, setPrice] = React.useState<PriceProps>(
+        {
+            priceFrom: Number(searchParams.get('priceFrom')) || 0,
+            priceTo: Number(searchParams.get('priceTo')) || 1000
+        }
+    )
 
     const items = ingredients.map((ingredient) => ({
         text: ingredient.name,
@@ -35,9 +55,50 @@ export const Filters: React.FC<Props> = ({ className }) => {
         setPrice({ ...price, [name]: value })
     }
 
+    useEffect(() => {
+        const filters = {
+            pizzaTypes: Array.from(pizzaTypes),
+            sizes: Array.from(sizes),
+            ingredients: Array.from(selectedIds)
+        }
+
+        if (price.priceFrom !== 0 || price.priceTo !== 1000) {
+            // @ts-ignore
+            filters.priceFrom = price.priceFrom
+            // @ts-ignore
+            filters.priceTo = price.priceTo
+        }
+
+        const query = qs.stringify(filters, { arrayFormat: 'comma' })
+        router.push(`?${query}`, { scroll: false })
+    }, [price, pizzaTypes, sizes, selectedIds]);
+
+    useEffect(() => {
+
+        if (price.priceFrom > 990) {
+            updatePrice('priceFrom', 990)
+        }
+
+        if (price.priceTo < 10) {
+            updatePrice('priceTo', 10)
+        }
+    }, [price]);
+
     return (
         <div className={className}>
             <Title text="Фильтрация" size="sm" className="mb-5 font-bold" />
+
+            <CheckboxFiltersGroup
+                className="mb-5"
+                title="Тип тіста"
+                items={[
+                    { text: 'Тонке', value: '1' },
+                    { text: 'Традиційне', value: '2' },
+                ]}
+                OnClickCheckbox={togglePizzaTypes}
+                selected={pizzaTypes}
+                name="sizes"
+            />
 
             <CheckboxFiltersGroup
                 className="mb-5"
