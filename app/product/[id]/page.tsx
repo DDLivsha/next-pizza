@@ -1,12 +1,26 @@
+import Container from "@/components/shared/container";
+import { ProductImage } from "@/components/shared/product-image";
+import { Title } from "@/components/shared/title";
+import { prisma } from "@/prisma/prisma-client";
+import { notFound } from "next/navigation";
 
 
-
-export default function ProductPage({ params }: { params: { id: string } }) {
+export default async function ProductPage({ params }: { params: { id: string } }) {
     const { id } = params;
+    const product = await prisma.product.findFirst({ where: { id: Number(id) } });
 
-    return (
-        <div>
-            <h1>Product {id}</h1>
+    if (!product) {
+        return notFound()
+    }
+
+    return <Container className="flex flex-col my-10">
+        <div className="flex flex-1">
+            <ProductImage imageUrl={product.imageUrl} size={40} />
+            <div className="w-[490px] bg-[#ededed] p-7">
+                <Title text={product.name} size="md" className="font-extrabold mb-1" />
+                <p className="text-gray-400">Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio magni voluptatibus nemo aperiam nisi minus consectetur laboriosam ab saepe earum, porro quas soluta perferendis cum unde adipisci ratione! Velit, quisquam.</p>
+            </div>
         </div>
-    );
+
+    </Container>
 }
