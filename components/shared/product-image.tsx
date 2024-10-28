@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from '@/shared/lib/utils'
 import React from 'react'
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 
 export const ProductImage: React.FC<Props> = ({ imageUrl, size, className }) => {
     return (
-        <div className={cn('flex items-center justify-center flex-1 relative w-full',className)}>
+        <div className={cn('flex items-center justify-center flex-1 relative w-full max-h-[600px]',className)}>
             <img
                 src={imageUrl}
                 alt="product"

@@ -1,5 +1,5 @@
 'use client'
-import { cn } from '@/lib/utils';
+import { cn } from '@/shared/lib/utils';
 import { Plus } from 'lucide-react';
 import React from 'react'
 import { Title } from './title';
@@ -35,10 +35,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ name, id, price, count
                 <span className='text-[20px]'>
                     від <b>{price}₴</b>
                 </span>
-                <Button variant='secondary' className='text=base font-bold'>
-                    <Plus className='w-5 h-5 mr-1' />
-                    Додати
-                </Button>
+                <Link href={`/product/${id}`}>
+                    <Button variant='secondary' className='text=base font-bold'>
+                        <Plus className='w-5 h-5 mr-1' />
+                        Додати
+                    </Button>
+                </Link>
             </div>
         </div>
     );

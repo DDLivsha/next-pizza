@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from '@/shared/lib/utils'
 import React from 'react'
 /**
  * A container component that centers content horizontally and limits the

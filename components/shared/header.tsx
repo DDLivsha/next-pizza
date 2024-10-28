@@ -1,7 +1,7 @@
 import React from 'react'
 import Container from './container'
 import Image from 'next/image'
-import { cn } from '@/lib/utils'
+import { cn } from '@/shared/lib/utils'
 import { Button } from '../ui/button'
 import { ShoppingCart, User, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
