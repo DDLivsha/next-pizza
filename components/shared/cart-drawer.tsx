@@ -5,11 +5,19 @@ import { ArrowRight } from 'lucide-react'
 import { Button } from '../ui/button'
 import { CartDrawerItem } from './cart-drawer-item'
 import { getCartItemDetails } from '@/shared/lib/get-cart-item-details'
+import { useCartStore } from '@/shared/store/cart'
+import { PizzaType, PizzaSize } from '@/shared/constants/pizza'
 
 interface Props {
     className?: string
 }
 export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ children, className }) => {
+
+    const {totalAmount, fetchCartItems, items} = useCartStore()
+
+    React.useEffect(() => {
+        fetchCartItems()
+    }, [])
 
     return (
         <Sheet>
@@ -22,7 +30,9 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ children,
                 </SheetHeader>
 
                 <div className='-mx-6 mt-5 overflow-auto flex-1 scrollbar flex flex-col gap-2'>
-                    <CartDrawerItem id={1} imageUrl='https://r2.erweima.ai/imgcompressed/compressed_2d14dc1c7a196726045314e6adc4ca67.webp' details={getCartItemDetails(2, 30, [{ name: 'Цыпленок' }, { name: 'pipa' }])} name='Chicken' price={123} quantity={1} className='' />
+                    {items.map((item) => (
+                        <CartDrawerItem key={item.id} id={item.id} imageUrl={item.imageUrl} details={item.pizzaSize ? getCartItemDetails(item.ingredients, item.pizzaType as PizzaType, item.pizzaSize as PizzaSize) : ''} name={item.name} price={item.price} quantity={item.quantity} className='' />
+                    ))}
                 </div>
 
 
@@ -32,7 +42,7 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ children,
                             <span className="flex flex-1 text-lg text-neutral-500">Всього:
                                 <div className="flex-1 border-b border-dashed border-b-neutral-200 relative -top-1 mx-2"></div>
                             </span>
-                            <span className="font-bold text-lg">{500} ₴</span>
+                            <span className="font-bold text-lg">{totalAmount} ₴</span>
                         </div>
                         <Link href='/cart'>
                             <Button
