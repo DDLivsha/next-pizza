@@ -13,11 +13,13 @@ interface Props {
 }
 export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ children, className }) => {
 
-    const {totalAmount, fetchCartItems, items} = useCartStore()
+    const cartState = useCartStore((state) => state);
+
+    const { items, totalAmount } = cartState;
 
     React.useEffect(() => {
-        fetchCartItems()
-    }, [])
+        cartState.fetchCartItems();
+    }, []);
 
     return (
         <Sheet>
@@ -25,7 +27,7 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ children,
             <SheetContent className='flex flex-col justify-between pb-0 bg-[#f4f1ee]'>
                 <SheetHeader>
                     <SheetTitle>
-                        В корзині <span className='font-bold'>123 товарів</span>
+                        В корзині <span className='font-bold'>{items.length} товарів</span>
                     </SheetTitle>
                 </SheetHeader>
 

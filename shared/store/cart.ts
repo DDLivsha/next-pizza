@@ -22,18 +22,34 @@ export const useCartStore = create<CartState>((set, get) => ({
 
     fetchCartItems: async () => {
         try {
-            set({ loading: true, error: false })
-            const data = await Api.cart.fetchCart()
-            set(getCartDetails(data))
+            set({ loading: true, error: false });
+            const data = await Api.cart.getCart();
+            //@ts-ignore
+            set(getCartDetails(data.userCart));
+            
         } catch (error) {
-            console.error(error)
-            set({ error: true })
+            console.error(error);
+            set({ error: true });
         } finally {
-            set({ loading: false })
+            set({ loading: false });
         }
     },
 
-    removeCartItem: async (id: number) => {},
-    updateItemQuantity: async (id: number, quantity: number) => {},
-    addCartItem: async (values: any) => {},
+    removeCartItem: async (id: number) => {
+
+    },
+    updateItemQuantity: async (id: number, quantity: number) => {
+        try {
+            set({ loading: true, error: false });
+            const data = await Api.cart.updateItemQuantity(id, quantity);
+            //@ts-ignore
+            set(getCartDetails(data.userCart));
+        } catch (error) {
+            console.error(error);
+            set({ error: true });
+        } finally {
+            set({ loading: false });
+        }
+    },
+    addCartItem: async (values: any) => { },
 }))

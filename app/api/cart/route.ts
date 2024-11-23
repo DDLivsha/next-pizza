@@ -11,9 +11,7 @@ export async function GET(req: NextRequest) {
 
         const userCart = await prisma.cart.findFirst({
             where: {
-                OR: [
-                    { token: token }
-                ]
+                token: token
             },
             include: {
                 items: {
