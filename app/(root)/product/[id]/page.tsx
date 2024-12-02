@@ -33,7 +33,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
                     name: 'Велика',
                     value: "3",
                 }
-                ]} selectedValue="1" />
+                ]} value="1" />
             </div>
         </div>
 
