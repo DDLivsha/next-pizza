@@ -5,11 +5,8 @@ import React from 'react'
 import { Title } from './title';
 import { Button } from '../ui/button';
 import Link from 'next/link';
-/**
- * A component that displays a product card.
- *
- * @returns A React component for displaying a product card.
- */
+import { Ingredient } from '@prisma/client';
+
 export interface ProductCardProps {
     name: string;
     price: number;
@@ -17,9 +14,10 @@ export interface ProductCardProps {
     imageUrl: string;
     className?: string;
     id: number;
+    ingredients: Ingredient[]
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ name, id, price, count, imageUrl, className }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ name, id, price, count, imageUrl, className, ingredients }) => {
     return (
         <div className={cn(className)}>
             <div className="flex justify-center p-6 rounded-lg h-[260px] ">
@@ -28,7 +26,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ name, id, price, count
             <Link href={`/product/${id}`}>
                 <Title text={name} size='sm' className="mb-1 mt-3 font-bold" />
                 <p className="text-sm text-gray-400">
-                    Цыпленок, моцарелла, сыры чеддер и пармезан, сырный соус, томаты, соус альфредо, чеснок
+                    {ingredients.map((item, i) => item.name).join(', ')}
                 </p>
             </Link>
             <div className="flex justify-between mt-4 items-center">

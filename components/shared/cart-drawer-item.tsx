@@ -11,9 +11,13 @@ interface Props extends CartItemProps {
     onClickRemove?: () => void
     className?: string
 }
-export const CartDrawerItem: React.FC<Props> = ({ id, imageUrl, name, price, quantity, details, className, onClickRemove, onCLickCountButton }) => {
+export const CartDrawerItem: React.FC<Props> = ({ id, imageUrl, name, price, quantity, details, className, onClickRemove, disabled, onCLickCountButton }) => {
     return (
-        <div className={cn('flex bg-white p-5 gap-6', className)}>
+        <div className={cn('flex bg-white p-5 gap-6',
+        {
+            'opacity-50 pointer-events-none': disabled,
+        },
+        className)}>
             <CartItem.Image src={imageUrl} />
             <div className="flex-1">
                 <CartItem.Info name={name} details={details} />

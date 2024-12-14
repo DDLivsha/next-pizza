@@ -63,7 +63,8 @@ export async function POST(req: NextRequest) {
                 ingredients: {
                     every: {
                         id: { in: data.ingredients }
-                    }
+                    },
+                    some: {}
                 }
             }
         })
@@ -77,8 +78,6 @@ export async function POST(req: NextRequest) {
                     quantity: findCartItem.quantity + 1
                 }
             })
-
-
         } else {
             await prisma.cartItem.create({
                 data: {
