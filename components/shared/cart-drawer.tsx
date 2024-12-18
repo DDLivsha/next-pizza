@@ -10,21 +10,15 @@ import { PizzaType, PizzaSize } from '@/shared/constants/pizza'
 import Image from 'next/image'
 import { Title } from './title'
 import { cn } from '@/shared/lib/utils'
+import { useCart } from '@/shared/hooks/use-cart'
 
-interface Props {
-    className?: string
-}
-export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ children, className }) => {
 
-    const cartState = useCartStore((state) => state);
+export const CartDrawer: React.FC<React.PropsWithChildren> = ({ children }) => {
 
-    const { items, totalAmount, fetchCartItems, updateItemQuantity, removeCartItem } = cartState;
+    const { items, totalAmount, updateItemQuantity, removeCartItem } = useCart()
+    const [redirecting, setRedirecting] = React.useState(false);
 
-    React.useEffect(() => {
-        fetchCartItems();
-    }, []);
-
-    const onCLickCountButton = (id: number, quantity: number, type: 'plus' | 'minus') => {
+    const onClickCountButton = (id: number, quantity: number, type: 'plus' | 'minus') => {
         const newQuantity = type === 'plus' ? quantity + 1 : quantity - 1;
         updateItemQuantity(id, newQuantity);
     }
@@ -39,31 +33,31 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ children,
                             В корзині <span className='font-bold'>{items.length} {items.length === 1 ? 'товар' : items.length === 2 || items.length === 3 || items.length === 4 ? 'товари' : 'товарів'}</span>
                         </SheetTitle>
                     </SheetHeader>}
-    
-    
+
+
                     {!totalAmount && <div className="flex flex-col items-center justify-center w-72 mx-auto">
-                    <Image src="/assets/images/empty-box.png" alt="cart" width={120} height={120} />
-                    <Title size='sm' text='Ваша корзина порожня' className='font-bold text-center my-2' />
-                    <p className='text-center text-neutral-500 mb-5'>
-                        Додайте хоча б один товар в корзину щоб зробити замовлення
-                    </p>
-                    <SheetClose>
-                        <Button className='w-56 h-12 text-base' size='lg'>
-                            <ArrowLeft className='w-5 mr-2' />
-                            Повернутися
-                        </Button>
-                    </SheetClose>
+                        <Image src="/assets/images/empty-box.png" alt="cart" width={120} height={120} />
+                        <Title size='sm' text='Ваша корзина порожня' className='font-bold text-center my-2' />
+                        <p className='text-center text-neutral-500 mb-5'>
+                            Додайте хоча б один товар в корзину щоб зробити замовлення
+                        </p>
+                        <SheetClose>
+                            <Button className='w-56 h-12 text-base' size='lg'>
+                                <ArrowLeft className='w-5 mr-2' />
+                                Повернутися
+                            </Button>
+                        </SheetClose>
                     </div>}
                     {totalAmount > 0 && <>
                         <div className='-mx-6 mt-5 overflow-auto flex-1 scrollbar flex flex-col gap-2'>
                             {items.map((item) => (
-                                <CartDrawerItem key={item.id} id={item.id} imageUrl={item.imageUrl} disabled={item.disabled} details={item.pizzaSize ? getCartItemDetails(item.ingredients, item.pizzaType as PizzaType, item.pizzaSize as PizzaSize) : ''} name={item.name} price={item.price} quantity={item.quantity} className='' onCLickCountButton={(type) => {
-                                    onCLickCountButton(item.id, item.quantity, type)
+                                <CartDrawerItem key={item.id} id={item.id} imageUrl={item.imageUrl} disabled={item.disabled} details={item.pizzaSize ? getCartItemDetails(item.ingredients, item.pizzaType as PizzaType, item.pizzaSize as PizzaSize) : ''} name={item.name} price={item.price} quantity={item.quantity} className='' onClickCountButton={(type) => {
+                                    onClickCountButton(item.id, item.quantity, type)
                                 }} onClickRemove={() => removeCartItem(item.id)} />
                             ))}
                         </div>
-    
-    
+
+
                         <SheetFooter className='-mx-6 bg-white p-8'>
                             <div className="w-full">
                                 <div className="flex mb-4">
@@ -72,10 +66,11 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ children,
                                     </span>
                                     <span className="font-bold text-lg">{totalAmount} ₴</span>
                                 </div>
-                                <Link href='/cart'>
+                                <Link href='/checkout'>
                                     <Button
                                         className="w-full h-12 text-base"
-                                        // loading={loading || redirecting}
+                                        onClick={() => setRedirecting(true)}
+                                        loading={redirecting}
                                         type='submit'
                                     >Оформити замовлення
                                         <ArrowRight className='w-5 ml-2' />
