@@ -3,23 +3,30 @@ import { WhiteBlock } from './white-block'
 import { CheckoutItemDetails } from './checkout-item-details'
 import { ArrowRight, Package, Percent, Truck } from 'lucide-react'
 import { Button } from '../ui/button'
+import { Skeleton } from '../ui/skeleton'
 
 interface Props {
     className?: string
-    totalPrice: number
     totalAmount: number
-    vatPrice: number
-    DELIVERY_PRICE: number
+    loading?: boolean
 }
-export const CheckoutSidebar: React.FC<Props> = ({ totalPrice, totalAmount, vatPrice, DELIVERY_PRICE }) => {
 
+const VAT = 15
+const DELIVERY_PRICE = 250
+export const CheckoutSidebar: React.FC<Props> = ({ totalAmount, loading }) => {
 
+    const vatPrice = ((totalAmount * VAT) / 100)
+    const totalPrice = totalAmount + vatPrice + DELIVERY_PRICE
 
     return (
         <WhiteBlock className='p-6 sticky top-4'>
             <div className='flex flex-col gap-1'>
                 <span className='text-xl'>Загальна сума:</span>
-                <span className='text-4xl font-extrabold'>{totalPrice.toFixed(2)} ₴</span>
+                {loading
+                    ?
+                    <Skeleton className='h-10 w-32' />
+                    :
+                    <span className='text-4xl font-extrabold'>{totalPrice.toFixed(2)} ₴</span>}
             </div>
 
             <CheckoutItemDetails title={

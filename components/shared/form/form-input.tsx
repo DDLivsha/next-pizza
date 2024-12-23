@@ -3,6 +3,7 @@ import { RequiredSymbol } from '../required-symbol'
 import { Input } from '@/components/ui/input'
 import { ErrorText } from '../error-text'
 import { ClearButton } from '../clear-button'
+import { useFormContext } from 'react-hook-form'
 
 interface Props {
     name: string
@@ -14,18 +15,28 @@ interface Props {
 
 export const FormInput: React.FC<Props> = ({ className, label, required, name, placeholder, ...props }) => {
 
-    // const {} = useForm
+    const {
+        register, 
+        formState: { errors },
+        watch,
+        setValue
+    } = useFormContext()
+
+    const value = watch(name)
+    const error = errors[name]?.message as string
+
+    const onClickClear = () => setValue(name, '', { shouldValidate: true })
 
     return (
         <div className={className}>
             {label && <p className="font-medium mb-2">{label} {required && <RequiredSymbol />}</p>}
 
             <div className='relative'>
-                <Input className='h-12 text-md' {...props} placeholder={placeholder} />
+                <Input className='h-12 text-md' {...register(name)} {...props} placeholder={placeholder} />
                 
-                <ClearButton />
+                {value && <ClearButton onClick={onClickClear} />}
             </div>
-            <ErrorText className='mt-2' text={'Поле обов’язкове для заповнення'} />
+            {error && <ErrorText className='mt-2' text={error} />}
         </div>
     )
 }
